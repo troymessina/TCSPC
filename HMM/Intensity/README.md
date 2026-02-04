@@ -14,38 +14,37 @@ The HMM analysis code expects a **whitespace-delimited text file** (not comma-se
 The file should be structured as follows (whitespace-delimited):
 
 ```
-<row_label>  <binary_1>  <binary_2>  <binary_3>  ...  <binary_N>
-<time_0>     <value_1>   <value_2>   <value_3>   ...  <value_N>
-<time_1>     <value_1>   <value_2>   <value_3>   ...  <value_N>
-<time_2>     <value_1>   <value_2>   <value_3>   ...  <value_N>
+<binary_0>     <value_1>   <value_2>   <value_3>   ...  <value_N>
+<binary_1>     <value_1>   <value_2>   <value_3>   ...  <value_N>
+<binary_2>     <value_1>   <value_2>   <value_3>   ...  <value_N>
+<binary_3>     <value_1>   <value_2>   <value_3>   ...  <value_N>
 ...
-<time_M>     <value_1>   <value_2>   <value_3>   ...  <value_N>
+<binary_M>     <value_1>   <value_2>   <value_3>   ...  <value_N>
 ```
 
 ### Components
 
 | Component | Description | Type | Example |
 |-----------|-------------|------|---------|
-| `<row_label>` | Header for the first column (ignored after loading) | String/Numeric | `time` or `index` |
 | `<binary_i>` | Binary flag (0 or 1) indicating whether to process trajectory i | Integer (0 or 1) | `1` |
-| `<time_j>` | Identifier for time point j (can be actual time or index) | Numeric | `0.0`, `0.1`, `0.2`, etc. |
 | `<value_i>` | Intensity/count value for trajectory i at a given time point | Float | `15.3`, `22.7`, etc. |
+
+The timestep should be set in the preamble of the program using `DEFAULT_BINNING = 0.1`. This is used to scale the trajectory.
 
 ### Dimensions
 
-- **Rows**: `M + 1` (1 header row + M time points)
-- **Columns**: `N + 1` (1 label column + N trajectories)
+- **Rows**: `M` (M time trajectoriess)
+- **Columns**: `N + 1` (1 binary label column + N ime points)
 
 ## Example File
 
 ```
-Index    1      0      1      1      0
-0.0      12.5   8.3    15.2   10.1   9.7
-0.1      13.1   8.1    15.8   10.3   9.5
-0.2      12.8   7.9    14.9   10.0   9.8
-0.3      25.4   8.2    28.1   22.5   9.6
-0.4      24.9   8.0    27.8   22.1   9.4
-0.5      25.1   8.1    28.2   22.3   9.7
+0      12.5   8.3    15.2   10.1   9.7
+1      13.1   8.1    15.8   10.3   9.5
+1      12.8   7.9    14.9   10.0   9.8
+1      25.4   8.2    28.1   22.5   9.6
+0      24.9   8.0    27.8   22.1   9.4
+0      25.1   8.1    28.2   22.3   9.7
 ...
 ```
 
@@ -128,10 +127,12 @@ The binary flags in the first row serve as a **pre-filtering mechanism**, typica
 
 ## File Creation Tips
 
-### Python Example
+### Python Simulation Example
+Simulated trajectories can be created, saved, and analyzied with the following code.
 ```python
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Create sample data
 n_trajectories = 10
@@ -150,19 +151,24 @@ data = np.random.poisson(15, size=(n_timepoints, n_trajectories))
 data[n_timepoints//2:, :] = np.random.poisson(7, size=(n_timepoints//2, n_trajectories))
 
 # Create DataFrame
-df = pd.DataFrame(data, index=time, columns=binaries)
+df = pd.DataFrame(data.T, index=binaries)
 
 # Save as whitespace-delimited file
 df.to_csv('hmm_input.txt', sep=' ', float_format='%.1f')
+
+#Plot some of the trajectories
+plt.plot(time, data[:,0:3])
+plt.xlabel('time (s)')
+plt.ylabel('intensity')
+plt.show()
 ```
 
 ### Expected Output Format
 ```
-       1    0    1    1    0    1    1    0    1    1
-0.0   15.0  14.0  16.0  13.0  15.0  14.0  17.0  15.0  14.0  16.0
-0.1   16.0  15.0  14.0  15.0  16.0  15.0  15.0  14.0  15.0  15.0
+1   15.0  14.0  16.0  13.0  15.0  14.0  17.0  15.0  14.0  16.0
+0   16.0  15.0  14.0  15.0  16.0  15.0  15.0  14.0  15.0  15.0
 ...
-5.0    7.0   8.0   6.0   7.0   8.0   7.0   6.0   8.0   7.0   7.0
+1    7.0   8.0   6.0   7.0   8.0   7.0   6.0   8.0   7.0   7.0
 ...
 ```
 
