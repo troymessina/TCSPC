@@ -1,5 +1,5 @@
 # TCSPC
-This is a collection of analysis programs for fluorescence microscopy and time-correlated single photon counting (TCSPC) experiments.
+This is a collection of analysis programs for fluorescence microscopy and time-correlated single photon counting (TCSPC) experiments. The Jupyter notebooks can be opened in Google's Colab. Simply go to a notebook (.ipynb file). Change the html address from github.com to githubtocolab.com or from github.com to colab.research.google.com.
 
 ## Directory Descriptions:
 * IPG - an implementation of interior point gradient methods to globally fit TCSPC lifetime data over an experimental coordinate (concentration, incubation time, etc.)
@@ -12,5 +12,5 @@ This is a collection of analysis programs for fluorescence microscopy and time-c
 
 * Multiexponential TCSPC Lifetimes
   * Fit lifetime data with an arbitrary number of exponential functions and a convolved instrument response function.
-* TCSPC Anisotropy (coming soon)
+* TCSPC Anisotropy - single shot magic, vertical, horizontal angle fluorescence analysis. Coming soon: Experimental coordinate analysis such as analysis of ligand concentration dependence.
   * "Protein Free Energy Landscapes Remodeled by Ligand Binding," Troy C. Messina and David S. Talaga, *Biophysical Journal* **93** 579-585 (2007); doi: 10.1529/biophysj.107.103911
